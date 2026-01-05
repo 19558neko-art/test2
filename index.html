@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIX-IT SYSTEM | All-in-One Professional Asset Management</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Modal รูปภาพ -->
+    <div id="imgModal" class="modal hidden" onclick="closeImg()">
+        <img id="modalImg" src="">
+    </div>
+
+    <!-- SECTION: LOGIN -->
+    <div id="authSection" class="auth-wrapper">
+        <div class="auth-container">
+            <div style="margin-bottom:30px;">
+                <span class="fix-text">FIX-</span><span class="it-text">IT</span>
+                <p style="color:#888; margin-top:10px;">ระบบแจ้งซ่อมและจัดการครุภัณฑ์</p>
+            </div>
+
+            <div class="form-group">
+                <label>เข้าสู่ระบบในฐานะ</label>
+                <select id="userRole">
+                    <option value="staff">พนักงาน (Staff)</option>
+                    <option value="admin">ผู้ดูแลระบบ (Administrator)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>ชื่อผู้ใช้งาน</label>
+                <input type="text" id="loginUser" placeholder="กรอกชื่อผู้ใช้งาน">
+            </div>
+
+            <div class="form-group">
+                <label>รหัสผ่าน</label>
+                <input type="password" id="loginPass" placeholder="กรอกรหัสผ่าน">
+            </div>
+
+            <button class="btn-submit" onclick="handleLogin()">เข้าสู่ระบบ</button>
+
+            <div style="font-size:11px; font-weight:400; color:#777; line-height:1.6;">
+                  <b style="font-weight:600;">🔑 ข้อมูลทดสอบระบบ:</b><br>
+                 • บัญชีพนักงาน: user / 123<br>
+                 • บัญชีแอดมิน: admin / admin<br>
+                 • สิทธิ์พิเศษ: op / 123 (ใช้ได้ทั้งสองฐานะ)
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION: DASHBOARD -->
+    <div id="dashboard" class="hidden">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <strong id="displayUser">FIX-IT USER</strong>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li id="menu-repair" class="active" onclick="showPage('repair')">📝 แจ้งซ่อมครุภัณฑ์</li>
+                <li id="menu-list" onclick="showPage('list')">🔍 ติดตามการซ่อม</li>
+                <li id="menu-chat" onclick="showPage('chat')">💬 ติดต่อเจ้าหน้าที่</li>
+                <li id="menu-email" onclick="showPage('email')">📧 บุคลากร</li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <button onclick="confirmLogout()">ออกจากระบบ</button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- PAGE: REPAIR -->
+            <section id="page-repair" class="page">
+                <div class="card">
+                    <h2>📝 แจ้งซ่อมครุภัณฑ์</h2>
+
+                    <!-- ผู้แจ้ง -->
+                    <div class="form-group">
+                        <label>ผู้แจ้ง</label>
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+                            <input id="repName" type="text" placeholder="ชื่อ-นามสกุล">
+                            <input id="repDept" type="text" placeholder="แผนก">
+                            <input id="repPhone" type="text" placeholder="เบอร์ติดต่อ">
+                        </div>
+                    </div>
+
+                    <!-- ครุภัณฑ์ -->
+                    <div class="form-group">
+                        <label>ครุภัณฑ์</label>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                            <select id="repAssetType" onchange="genAssetCodes(this.value)">
+                                <option value="">-- เลือกประเภท --</option>
+                                <option value="A">A = คอมพิวเตอร์</option>
+                                <option value="B">B = เครื่องปรับอากาศ</option>
+                                <option value="C">C = โต๊ะ</option>
+                                <option value="D">D = โซฟา</option>
+                                <option value="E">E = เครื่องถ่ายเอกสาร</option>
+                                <option value="F">F = โปรเจกเตอร์</option>
+                                <option value="G">G = อื่นๆ</option>
+                            </select>
+
+                            <select id="repAssetCode">
+                                <option value="">-- เลือกเลขครุภัณฑ์ --</option>
+                            </select>
+
+                            <input id="repAssetCustom" type="text" placeholder="ระบุหมายเลขครุภัณฑ์เอง" class="hidden">
+                        </div>
+                    </div>
+
+                    <!-- สถานที่ -->
+                    <div class="form-group">
+                        <label>สถานที่</label>
+                        <input id="repLocation" type="text" placeholder="อาคาร / ชั้น / ห้อง">
+                    </div>
+
+                    <!-- รายละเอียด -->
+                    <div class="form-group">
+                        <label>รายละเอียดปัญหา</label>
+                        <textarea id="repProblem" rows="4" placeholder="อธิบายปัญหา..."></textarea>
+                    </div>
+
+                    <!-- แนบรูป -->
+                    <div class="form-group">
+                        <label>แนบรูปภาพ</label>
+                        <input id="repImage" type="file" accept="image/*">
+                    </div>
+
+                    <!-- ความเร่งด่วน -->
+                    <div class="form-group">
+                        <label>ความเร่งด่วน</label>
+                        <select id="repUrgency">
+                            <option value="normal">ปกติ</option>
+                            <option value="urgent">ด่วน</option>
+                            <option value="critical">ด่วนที่สุด</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-submit" onclick="submitRepair()">ส่งแจ้งซ่อม</button>
+                </div>
+            </section>
+
+            <!-- PAGE: LIST -->
+            <section id="page-list" class="page hidden">
+                <div class="card">
+                    <h2>🔍 ติดตามการซ่อมครุภัณฑ์</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ระดับ</th>
+                                    <th>วันที่แจ้ง</th>
+                                    <th>ผู้แจ้ง</th>
+                                    <th>แผนก</th>
+                                    <th>สถานที่</th>
+                                    <th>รหัสครุภัณฑ์</th>
+                                    <th>ประเภท</th>
+                                    <th>สถานะ</th>
+                                    <th>รูป</th>
+                                    <th>ยกเลิก</th>
+                                </tr>
+                            </thead>
+                            <tbody id="repairBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="noDataMessage" class="hidden" style="text-align:center;color:#999;padding:30px;">
+                        ยังไม่มีรายการแจ้งซ่อม
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGE: CHAT -->
+            <section id="page-chat" class="page hidden">
+                <div class="card chat-card">
+                    <h2>💬 ติดต่อเจ้าหน้าที่ IT</h2>
+
+                    <!-- กล่องข้อความ -->
+                    <div id="chatBox" class="chat-box"></div>
+
+                    <!-- ส่งข้อความ -->
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInput" placeholder="พิมพ์ข้อความ..." autocomplete="off"
+                               onkeypress="if(event.key==='Enter') sendMessage()">
+                        <button class="btn-submit" onclick="sendMessage()">ส่ง</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGE: EMAIL -->
+            <section id="page-email" class="page hidden">
+                <div class="card">
+                    <h2>ระบบสืบค้นข้อมูลบุคลากร</h2>
+                    <input type="text" id="emailSearch" placeholder="ค้นหาชื่อหรืออีเมล..." onkeyup="searchEmail()">
+                    <div id="emailList"></div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="app.js"></script>
+
+</body>
+</html>

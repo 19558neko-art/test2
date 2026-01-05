@@ -1,0 +1,401 @@
+:root {
+    --primary: #0056b3;
+    --primary-hover: #004494;
+    --orange: #ff8c00;
+    --dark: #333;
+    --silver: #e0e0e0;
+    --green: #28a745;
+    --red: #dc3545;
+    --red-hover: #c82333;
+    --orange-status: #fd7e14;
+    --light-bg: #f8f9fa;
+    --shadow: 0 4px 12px rgba(0,0,0,0.1);
+    --auth-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background: #f4f4f4;
+    color: var(--dark);
+}
+
+/* --- modal image --- */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.modal img {
+    max-width: 90%;
+    max-height: 90%;
+    border: 5px solid white;
+}
+
+/* --- auth --- */
+.auth-wrapper {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-container {
+    width: 380px;
+    background: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: var(--auth-shadow);
+    text-align: center;
+}
+
+.fix-text { font-size: 45px; font-weight: 900; }
+.it-text {
+    font-size: 45px;
+    font-weight: 900;
+    background: var(--orange);
+    color: #fff;
+    padding: 0 10px;
+    border-radius: 8px;
+}
+
+/* --- form --- */
+.form-group { margin-bottom: 20px; text-align: left; }
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+/* --- sidebar --- */
+.sidebar {
+    width: 260px;
+    background: var(--dark);
+    color: #fff;
+    position: fixed;
+    height: 100vh;
+}
+
+#dashboard {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* sidebar */
+.sidebar {
+    width: 260px;
+    background: var(--dark);
+    color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 100;
+}
+
+.sidebar-header {
+    padding: 20px;
+    text-align: center;
+    background: #222;
+    border-bottom: 1px solid #444;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    padding: 16px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid #444;
+    transition: all 0.3s;
+}
+
+.sidebar-menu li:hover {
+    background: var(--primary);
+    padding-left: 30px;
+}
+
+.sidebar-menu li.active {
+    background: var(--primary);
+    border-left: 5px solid var(--orange);
+}
+
+/* logout button */
+.sidebar-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 20px;
+}
+
+.sidebar-footer button {
+    width: 100%;
+    padding: 12px;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* ===============================
+   MAIN CONTENT (ตัวแก้ที่ทำให้เห็นหน้า)
+   =============================== */
+
+.main-content {
+    margin-left: 260px;
+    padding: 40px;
+    width: calc(100% - 260px);
+    min-height: 100vh;              /* ⭐ เพิ่ม */
+    box-sizing: border-box;         /* ⭐ สำคัญ */
+}
+
+
+/* ===============================
+   PAGE SYSTEM
+   =============================== */
+
+.page {
+    display: block;
+    animation: fadeIn 0.4s ease;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ===============================
+   CARD / UI
+   =============================== */
+
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    width: 100%;                    /* ⭐ เต็มพื้นที่ */
+    max-width: 100%;                /* ⭐ ไม่บีบ */
+    overflow-x: auto;               /* ⭐ ตารางกว้างเลื่อนได้ */
+}
+
+.card h2 {
+    margin-top: 0;
+    color: var(--primary);
+}
+
+/* ===============================
+   BUTTON
+   =============================== */
+
+.btn-submit {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.btn-submit:hover {
+    background: var(--primary-hover);
+}
+
+/* ===============================
+   ANIMATION
+   =============================== */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* status */
+.status {
+    font-weight:600;
+}
+
+.page-list .card {
+    min-height: 70vh;               /* ⭐ เพิ่มพื้นที่แนวตั้ง */
+}
+
+.page-list table {
+    font-size: 14px;                /* อ่านง่าย */
+}
+
+.page-list th,
+.page-list td {
+    white-space: nowrap;            /* ไม่ตัดคำ */
+    padding: 12px 14px;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.urgency-normal { color:#056f00; font-weight:600; }
+.urgency-urgent { color:#ff9800; font-weight:600; }
+.urgency-critical { color:#bf360c; font-weight:700; }
+
+.urgency-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.urgency-badge.normal {
+    background: #e6f4ea;
+    color: #056f00;
+}
+
+.urgency-badge.urgent {
+    background: #fff3e0;
+    color: #ff9800;
+}
+
+.urgency-badge.critical {
+    background: #fdecea;
+    color: #bf360c;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+/* ==============================
+   ตารางติดตามการซ่อม
+============================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+th {
+    background: #f5f5f5;
+    font-weight: 600;
+}
+/* ไฮไลต์แถวตามความเร่งด่วน */
+.row-critical {
+    background-color: #ffe5e5;
+}
+
+.row-urgent {
+    background-color: #fff4e0;
+}
+
+.row-normal {
+    background-color: #e9f7ef;
+}
+
+.date-cell {
+    text-align: center;
+    line-height: 1.3;
+}
+
+.date-cell .date {
+    font-weight: bold;
+}
+
+.date-cell .time {
+    font-size: 12px;
+    color: #666;
+}
+select {
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.chat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.chat-box {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    max-height: 400px;      /* สูงสุดของกล่องแชท */
+    overflow-y: auto;       /* scroll เมื่อข้อความยาว */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chat-message {
+    display: flex;
+    flex-direction: column;
+    max-width: 70%;
+    padding: 8px 12px;
+    border-radius: 12px;
+    position: relative;
+    word-break: break-word;
+}
+
+.chat-message.staff {
+    background: #e6f4ea;
+    align-self: flex-start;
+}
+
+.chat-message.admin {
+    background: #fdecea;
+    align-self: flex-end;
+}
+
+.chat-user {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+
+.chat-text {
+    font-size: 14px;
+}
+
+.chat-time {
+    font-size: 10px;
+    color: #666;
+    text-align: right;
+    margin-top: 3px;
+}
+
+.chat-input-area {
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input-area input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+

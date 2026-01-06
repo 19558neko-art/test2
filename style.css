@@ -369,36 +369,30 @@ select {
     background: #fdecea;
     align-self: flex-end;
 }
-
 .chat-user {
     font-size: 12px;
     font-weight: bold;
     margin-bottom: 3px;
 }
-
 .chat-text {
     font-size: 14px;
 }
-
 .chat-time {
     font-size: 10px;
     color: #666;
     text-align: right;
     margin-top: 3px;
 }
-
 .chat-input-area {
     display: flex;
     gap: 10px;
 }
-
 .chat-input-area input {
     flex: 1;
     padding: 10px;
     border-radius: 8px;
     border: 1px solid #ddd;
 }
-
 @media (max-width: 768px) {
     .main-content {
         margin-left: 0;
@@ -409,7 +403,6 @@ select {
     .sidebar {
         width: 200px;
     }
-
     .form-group input,
     .form-group select,
     .form-group textarea {
@@ -424,24 +417,20 @@ select {
 /* ===============================
    HAMBURGER MENU (MOBILE)
 =============================== */
-
 .hamburger {
     display: none;
     font-size: 26px;
     cursor: pointer;
     margin-bottom: 20px;
 }
-
 /* ===============================
    MOBILE RESPONSIVE
 =============================== */
 @media (max-width: 768px) {
-
     /* แสดงปุ่ม ☰ */
     .hamburger {
         display: block;
     }
-
     /* ซ่อน sidebar ไว้ก่อน */
     .sidebar {
         transform: translateX(-100%);
@@ -449,16 +438,72 @@ select {
         position: fixed;
         z-index: 1000;
     }
-
     /* เมื่อเปิด sidebar */
     .sidebar.show {
         transform: translateX(0);
     }
-
     /* main content เต็มจอ */
     .main-content {
         margin-left: 0;
         width: 100%;
         padding: 20px;
     }
+}
+/* ===============================
+   MOBILE RESPONSIVE
+   =============================== */
+@media (max-width: 768px) {
+    /* ซ่อน sidebar ปกติ */
+    .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        transition: transform 0.3s ease;
+        z-index: 1000;
+    }
+    /* sidebar ตอนเปิด */
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    /* main content เต็มจอ */
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 20px;
+    }
+    /* hamburger */
+    .hamburger {
+        display: block;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        font-size: 26px;
+        background: var(--primary);
+        color: #fff;
+        padding: 8px 14px;
+        border-radius: 8px;
+        z-index: 1100;
+        cursor: pointer;
+    }
+    /* ฟอร์มจาก grid → column */
+    .form-group > div {
+        grid-template-columns: 1fr !important;
+    }
+    /* ปุ่มใหญ่ขึ้น */
+    button,
+    .btn-submit {
+        padding: 16px;
+        font-size: 16px;
+    }
+    /* ตารางเลื่อนได้ */
+    table {
+        font-size: 13px;
+}
+    /* กล่องแชทสูงพอดอมือถือ */
+    .chat-box {
+        max-height: 60vh;
+    }
+}
+/* desktop ซ่อน hamburger */
+.hamburger {
+    display: none;
 }

@@ -415,18 +415,34 @@ select {
     }
 }
 /* ===============================
-   HAMBURGER MENU (MOBILE)
+   HAMBURGER MENU (DEFAULT / DESKTOP)
 =============================== */
 .hamburger {
-    display: none;
+    display: none;          /* desktop ซ่อน */
     font-size: 26px;
     cursor: pointer;
-    margin-bottom: 20px;
 }
+
+/* ===============================
+   OVERLAY (พื้นหลังตอนเปิดเมนู)
+=============================== */
+#overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 8000;
+    display: none;
+}
+
+#overlay.active {
+    display: block;
+}
+
 /* ===============================
    MOBILE RESPONSIVE
 =============================== */
 @media (max-width: 768px) {
+
     /* ===================
        HAMBURGER BUTTON ☰
     =================== */
@@ -449,9 +465,10 @@ select {
         border-radius: 10px;
         cursor: pointer;
 
-        z-index: 99999; /* ⭐ สำคัญมาก กันโดนบัง */
+        z-index: 10000; /* สูงสุด */
         box-shadow: 0 4px 10px rgba(0,0,0,0.25);
     }
+
     /* ===================
        SIDEBAR
     =================== */
@@ -460,32 +477,36 @@ select {
         top: 0;
         left: 0;
 
-        width: 260px;
+        width: 240px;              /* ขนาดเหมาะมือถือ */
         height: 100vh;
 
         transform: translateX(-100%);
         transition: transform 0.3s ease;
 
-        z-index: 9000; /* ต่ำกว่า hamburger */
+        z-index: 9000;             /* ต่ำกว่า ☰ */
     }
+
     .sidebar.active {
         transform: translateX(0);
     }
+
     /* ===================
        MAIN CONTENT
     =================== */
     .main-content {
         margin-left: 0;
         width: 100%;
-        padding: 80px 20px 20px; /* ⭐ เว้นที่ให้ ☰ */
+        padding: 80px 20px 20px;   /* เว้นที่ให้ ☰ */
         box-sizing: border-box;
     }
+
     /* ===================
-       FORM LAYOUT
+       FORM
     =================== */
     .form-group > div {
         grid-template-columns: 1fr !important;
     }
+
     /* ===================
        BUTTON
     =================== */
@@ -494,58 +515,18 @@ select {
         padding: 16px;
         font-size: 16px;
     }
+
     /* ===================
        TABLE
     =================== */
     table {
         font-size: 13px;
     }
+
     /* ===================
        CHAT
     =================== */
     .chat-box {
         max-height: 60vh;
-    }
-}
-/* ===============================
-   DESKTOP
-=============================== */
-.hamburger {
-    display: none;
-}
-/* ===============================
-   OVERLAY (พื้นหลังตอนเปิดเมนู)
-=============================== */
-#overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    z-index: 8000;
-    display: none;
-}
-
-/* แสดง overlay */
-#overlay.active {
-    display: block;
-}
-/* ===============================
-   MOBILE MENU FIX
-=============================== */
-@media (max-width: 768px) {
-    /* hamburger ต้องอยู่บนสุด */
-    .hamburger {
-        z-index: 10000;   /* ⭐ สูงกว่า sidebar */
-    }
-    /* sidebar ต่ำกว่า hamburger */
-    .sidebar {
-        z-index: 9000;
-    }
-    /* เมื่อเปิด sidebar */
-    .sidebar.active {
-        transform: translateX(0);
-    }
-    /* main-content เว้นที่ให้ ☰ */
-    .main-content {
-        padding-top: 80px;
     }
 }

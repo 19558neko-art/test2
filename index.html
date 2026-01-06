@@ -4,15 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FIX-IT SYSTEM | All-in-One Professional Asset Management</title>
-
-    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="hamburger" onclick="toggleMenu()">☰</div>
-    <div id="overlay" onclick="toggleMenu()"></div>
-
-    <!-- Modal รูปภาพ -->
+<!-- Modal รูปภาพ -->
     <div id="imgModal" class="modal hidden" onclick="closeImg()">
         <img id="modalImg" src="">
     </div>
@@ -53,35 +48,35 @@
             </div>
         </div>
     </div>
-
     <!-- SECTION: DASHBOARD -->
-    <div id="dashboard" class="hidden">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="sidebar-header">
-                <strong id="displayUser">FIX-IT USER</strong>
-            </div>
+<div id="dashboard" class="hidden">
+    <!-- ☰ Hamburger (mobile only) -->
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+    <div id="overlay" onclick="toggleMenu()"></div>
 
-            <ul class="sidebar-menu">
-                <li id="menu-repair" class="active" onclick="showPage('repair')">📝 แจ้งซ่อมครุภัณฑ์</li>
-                <li id="menu-list" onclick="showPage('list')">🔍 ติดตามการซ่อม</li>
-                <li id="menu-chat" onclick="showPage('chat')">💬 ติดต่อเจ้าหน้าที่</li>
-                <li id="menu-email" onclick="showPage('email')">📧 บุคลากร</li>
-            </ul>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <strong id="displayUser">FIX-IT USER</strong>
+        </div>
 
-            <div class="sidebar-footer">
-                <button onclick="confirmLogout()">ออกจากระบบ</button>
-            </div>
-        </nav>
+        <ul class="sidebar-menu">
+            <li id="menu-repair" class="active" onclick="showPage('repair')">📝 แจ้งซ่อมครุภัณฑ์</li>
+            <li id="menu-list" onclick="showPage('list')">🔍 ติดตามการซ่อม</li>
+            <li id="menu-chat" onclick="showPage('chat')">💬 ติดต่อเจ้าหน้าที่</li>
+            <li id="menu-email" onclick="showPage('email')">📧 บุคลากร</li>
+        </ul>
 
+        <div class="sidebar-footer">
+            <button onclick="confirmLogout()">ออกจากระบบ</button>
+        </div>
+    </nav>  
         <!-- Main Content -->
         <main class="main-content">
-
             <!-- PAGE: REPAIR -->
             <section id="page-repair" class="page">
                 <div class="card">
                     <h2>📝 แจ้งซ่อมครุภัณฑ์</h2>
-
                     <!-- ผู้แจ้ง -->
                     <div class="form-group">
                         <label>ผู้แจ้ง</label>

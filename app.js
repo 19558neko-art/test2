@@ -179,17 +179,20 @@ function resetRepairForm() {
 // PAGE NAVIGATION
 // =======================
 function showPage(pid) {
-    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+    document.querySelectorAll('.page')
+        .forEach(p => p.classList.add('hidden'));
     const page = document.getElementById('page-' + pid);
     if (page) page.classList.remove('hidden');
-
-    document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active'));
+    document.querySelectorAll('.sidebar li')
+        .forEach(li => li.classList.remove('active'));
     const menu = document.getElementById('menu-' + pid);
     if (menu) menu.classList.add('active');
-
+    // ⭐ ปิด sidebar บนมือถือหลังเลือกเมนู
+    if (window.innerWidth <= 768) {
+        document.querySelector('.sidebar').classList.remove('show');
+    }
     if (pid === 'list') renderTable();
 }
-
 // =======================
 // HELPER FUNCTIONS
 // =======================
@@ -200,27 +203,23 @@ function toBase64(file) {
         r.readAsDataURL(file);
     });
 }
-
 // =======================
 // RENDER TABLE
 // =======================
 function renderTable() {
     const body = document.getElementById("repairBody");
     body.innerHTML = "";
-
     const db = JSON.parse(localStorage.getItem("repairs") || "[]");
     if (db.length === 0) {
         document.getElementById("noDataMessage").classList.remove("hidden");
         return;
     }
     document.getElementById("noDataMessage").classList.add("hidden");
-
     db.slice().reverse().forEach(item => {
         const tr = document.createElement("tr");
         if (item.urgency === "critical") tr.classList.add("row-critical");
         else if (item.urgency === "urgent") tr.classList.add("row-urgent");
         else tr.classList.add("row-normal");
-
         tr.innerHTML = `
             <td>${urgencyBadge(item.urgency)}</td>
             <td>${formatDate(item.date)}</td>
@@ -330,4 +329,8 @@ function renderChat() {
         CHAT_BOX.appendChild(div);
     });
     CHAT_BOX.scrollTop = CHAT_BOX.scrollHeight;
+}
+
+function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('show');
 }

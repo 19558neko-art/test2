@@ -334,3 +334,26 @@ function renderChat() {
 function toggleSidebar() {
     document.querySelector('.sidebar').classList.toggle('show');
 }
+function toggleMenu() {
+    document.querySelector('.sidebar').classList.toggle('active');
+}
+function showPage(pid) {
+    document.querySelectorAll('.page')
+        .forEach(p => p.classList.add('hidden'));
+
+    const page = document.getElementById('page-' + pid);
+    if (page) page.classList.remove('hidden');
+
+    document.querySelectorAll('.sidebar li')
+        .forEach(li => li.classList.remove('active'));
+
+    const menu = document.getElementById('menu-' + pid);
+    if (menu) menu.classList.add('active');
+
+    // ⭐ ปิด sidebar บนมือถือ
+    if (window.innerWidth <= 768) {
+        document.querySelector('.sidebar').classList.remove('active');
+    }
+
+    if (pid === 'list') renderTable();
+}

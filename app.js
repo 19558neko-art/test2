@@ -361,3 +361,13 @@ function toggleMenu() {
     document.querySelector('.sidebar').classList.toggle('active');
     document.getElementById('overlay').classList.toggle('active');
 }
+// ===============================
+// MOBILE HAMBURGER MENU
+// ===============================
+function toggleMenu() {
+    const sidebar = document.querySelector(".sidebar");
+    const overlay = document.getElementById("overlay");
+
+    sidebar.classList.toggle("active");
+    overlay.classList.toggle("active");
+}

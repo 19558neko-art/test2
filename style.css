@@ -427,7 +427,6 @@ select {
    MOBILE RESPONSIVE
 =============================== */
 @media (max-width: 768px) {
-
     /* ===================
        HAMBURGER BUTTON ☰
     =================== */
@@ -453,7 +452,6 @@ select {
         z-index: 99999; /* ⭐ สำคัญมาก กันโดนบัง */
         box-shadow: 0 4px 10px rgba(0,0,0,0.25);
     }
-
     /* ===================
        SIDEBAR
     =================== */
@@ -470,11 +468,9 @@ select {
 
         z-index: 9000; /* ต่ำกว่า hamburger */
     }
-
     .sidebar.active {
         transform: translateX(0);
     }
-
     /* ===================
        MAIN CONTENT
     =================== */
@@ -484,14 +480,12 @@ select {
         padding: 80px 20px 20px; /* ⭐ เว้นที่ให้ ☰ */
         box-sizing: border-box;
     }
-
     /* ===================
        FORM LAYOUT
     =================== */
     .form-group > div {
         grid-template-columns: 1fr !important;
     }
-
     /* ===================
        BUTTON
     =================== */
@@ -500,14 +494,12 @@ select {
         padding: 16px;
         font-size: 16px;
     }
-
     /* ===================
        TABLE
     =================== */
     table {
         font-size: 13px;
     }
-
     /* ===================
        CHAT
     =================== */
@@ -515,10 +507,45 @@ select {
         max-height: 60vh;
     }
 }
-
 /* ===============================
    DESKTOP
 =============================== */
 .hamburger {
     display: none;
+}
+/* ===============================
+   OVERLAY (พื้นหลังตอนเปิดเมนู)
+=============================== */
+#overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 8000;
+    display: none;
+}
+
+/* แสดง overlay */
+#overlay.active {
+    display: block;
+}
+/* ===============================
+   MOBILE MENU FIX
+=============================== */
+@media (max-width: 768px) {
+    /* hamburger ต้องอยู่บนสุด */
+    .hamburger {
+        z-index: 10000;   /* ⭐ สูงกว่า sidebar */
+    }
+    /* sidebar ต่ำกว่า hamburger */
+    .sidebar {
+        z-index: 9000;
+    }
+    /* เมื่อเปิด sidebar */
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    /* main-content เว้นที่ให้ ☰ */
+    .main-content {
+        padding-top: 80px;
+    }
 }

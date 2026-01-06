@@ -357,3 +357,7 @@ function showPage(pid) {
 
     if (pid === 'list') renderTable();
 }
+function toggleMenu() {
+    document.querySelector('.sidebar').classList.toggle('active');
+    document.getElementById('overlay').classList.toggle('active');
+}

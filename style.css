@@ -530,3 +530,14 @@ select {
         max-height: 60vh;
     }
 }
+/* ===== PHONE ERROR ===== */
+.error-text {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+input.error {
+    border: 2px solid #dc3545;
+    background: #fff5f5;
+}

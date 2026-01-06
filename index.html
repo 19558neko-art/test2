@@ -83,7 +83,20 @@
                         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
                             <input id="repName" type="text" placeholder="ชื่อ-นามสกุล">
                             <input id="repDept" type="text" placeholder="แผนก">
-                            <input id="repPhone" type="text" placeholder="เบอร์ติดต่อ">
+
+                            <!-- 🔽 เบอร์ติดต่อ (วางตรงนี้) -->
+                            <div style="display:flex;flex-direction:column;">
+                                <input id="repPhone"
+                                    type="text"
+                                    placeholder="เบอร์ติดต่อ (10 หลัก)"
+                                    inputmode="numeric"
+                                    maxlength="10"
+                                    oninput="validatePhone(this)"
+                                    required>
+                                <small id="phoneError" class="error-text hidden">
+                                    ⚠️ กรุณากรอกเบอร์มือถือให้ถูกต้อง (06 / 08 / 09)
+                                </small>
+                            </div>
                         </div>
                     </div>
 
@@ -101,7 +114,6 @@
                                 <option value="F">F = โปรเจกเตอร์</option>
                                 <option value="G">G = อื่นๆ</option>
                             </select>
-
                             <select id="repAssetCode">
                                 <option value="">-- เลือกเลขครุภัณฑ์ --</option>
                             </select>
@@ -202,6 +214,5 @@
 
     <!-- JavaScript -->
     <script src="app.js"></script>
-
 </body>
 </html>

@@ -117,6 +117,13 @@ async function submitRepair() {
     const phone = repPhone.value.trim();
     const type = repAssetType.value;
 
+    // ✅ ตรวจเบอร์โทรก่อน (สำคัญ)
+    if (!/^(06|08|09)[0-9]{8}$/.test(phone)) {
+        alert("กรุณากรอกเบอร์มือถือให้ถูกต้อง (06 / 08 / 09)");
+        repPhone.focus();
+        return;
+    }
+
     if (type === "G" && !repAssetCustom.value.trim()) {
         alert("กรุณาระบุหมายเลขครุภัณฑ์");
         return;
@@ -127,7 +134,10 @@ async function submitRepair() {
         return;
     }
 
-    let asset = type === "G" ? "G-" + repAssetCustom.value.trim() : repAssetCode.value;
+    let asset = type === "G"
+        ? "G-" + repAssetCustom.value.trim()
+        : repAssetCode.value;
+
     const loc = repLocation.value.trim();
     const prob = repProblem.value.trim();
     const urg = repUrgency.value;
@@ -144,8 +154,13 @@ async function submitRepair() {
 
     const record = {
         id: Date.now(),
-        name, dept, phone, asset,
-        location: loc, problem: prob, urgency: urg,
+        name,
+        dept,
+        phone,
+        asset,
+        location: loc,
+        problem: prob,
+        urgency: urg,
         status: "กำลังดำเนินการ",
         image: img,
         date: new Date().toLocaleString("th-TH")
@@ -159,6 +174,7 @@ async function submitRepair() {
     resetRepairForm();
     showPage('list');
 }
+
 
 function resetRepairForm() {
     repName.value = "";
@@ -341,4 +357,34 @@ function toggleMenu() {
 
     sidebar.classList.toggle("active");
     overlay.classList.toggle("active");
+}
+function onlyNumber(input) {
+    input.value = input.value.replace(/[^0-9]/g, '');
+    if (input.value.length > 10) {
+        input.value = input.value.slice(0, 10);
+    }
+}
+function validatePhone(input) {
+    const error = document.getElementById("phoneError");
+
+    // ลบทุกอย่างที่ไม่ใช่ตัวเลข
+    input.value = input.value.replace(/[^0-9]/g, '');
+
+    // จำกัด 10 หลัก
+    if (input.value.length > 10) {
+        input.value = input.value.slice(0, 10);
+    }
+
+    // ตรวจรูปแบบเบอร์มือถือไทย
+    const isValid =
+        input.value.length === 10 &&
+        /^(06|08|09)/.test(input.value);
+
+    if (!isValid && input.value.length > 0) {
+        input.classList.add("error");
+        error.classList.remove("hidden");
+    } else {
+        input.classList.remove("error");
+        error.classList.add("hidden");
+    }
 }

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESQ-Repair | ระบบส่งซ่อมครุภัณฑ์</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap');
+        body { font-family: 'Sarabun', sans-serif; background-color: #f4f7f6; }
+        .urgency-low { border-left: 5px solid #28a745; color: #28a745; }
+        .urgency-med { border-left: 5px solid #fd7e14; color: #fd7e14; }
+        .urgency-high { border-left: 5px solid #dc3545; color: #dc3545; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
+        .modal-content { max-width: 90%; max-height: 90%; margin: auto; display: block; position: relative; top: 50%; transform: translateY(-50%); }
+        .zoomable { cursor: zoom-in; transition: 0.3s; }
+        .zoomable:hover { opacity: 0.7; }
+        .sidebar { transition: 0.3s; width: 250px; }
+        @media (max-width: 768px) { .sidebar { width: 0; overflow: hidden; position: fixed; height: 100%; z-index: 50; } .sidebar.active { width: 250px; } }
+    </style>
+</head>
+<body>
+
+<div id="loginPage" class="flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md text-center">
+        <div class="mb-6">
+            <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-2">ESQ</div>
+            <h1 class="text-2xl font-bold text-gray-800">ESQ-Repair</h1>
+            <p class="text-gray-500">ระบบแจ้งซ่อมครุภัณฑ์ออนไลน์</p>
+        </div>
+        <div class="flex mb-4">
+            <button onclick="setRole('staff')" id="roleStaff" class="flex-1 py-2 bg-blue-600 text-white rounded-l-lg border border-blue-600">เจ้าหน้าที่</button>
+            <button onclick="setRole('employee')" id="roleEmp" class="flex-1 py-2 bg-white text-blue-600 rounded-r-lg border border-blue-600">พนักงาน</button>
+        </div>
+        <input type="text" id="username" placeholder="Username" class="w-full p-3 mb-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <input type="password" id="password" placeholder="Password" class="w-full p-3 mb-6 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button onclick="handleLogin()" class="w-full bg-blue-700 text-white p-3 rounded-lg font-bold hover:bg-blue-800 transition">เข้าสู่ระบบ</button>
+    </div>
+</div>
+
+<div id="mainApp" class="hidden flex h-screen overflow-hidden">
+    <aside id="sidebar" class="sidebar bg-slate-800 text-white flex-shrink-0">
+        <div class="p-5 text-xl font-bold border-b border-slate-700 flex justify-between items-center">
+            <span>ESQ-Repair</span>
+            <button class="md:hidden" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
+        </div>
+        <nav class="p-4 space-y-2">
+            <button onclick="showSection('form')" class="w-full text-left p-3 hover:bg-slate-700 rounded transition"><i class="fas fa-tools mr-2"></i> ส่งซ่อมครุภัณฑ์</button>
+            <button onclick="showSection('tracking')" class="w-full text-left p-3 hover:bg-slate-700 rounded transition"><i class="fas fa-search-location mr-2"></i> ติดตามการซ่อม</button>
+            <button onclick="showSection('history')" class="w-full text-left p-3 hover:bg-slate-700 rounded transition"><i class="fas fa-history mr-2"></i> ประวัติการซ่อม</button>
+            <button id="navAdminMember" onclick="showSection('members')" class="hidden w-full text-left p-3 hover:bg-slate-700 rounded transition"><i class="fas fa-users-cog mr-2"></i> จัดการสมาชิก</button>
+            <button id="navAdminStats" onclick="showSection('stats')" class="hidden w-full text-left p-3 hover:bg-slate-700 rounded transition"><i class="fas fa-chart-bar mr-2"></i> สถิติการซ่อม</button>
+            <button onclick="showSection('chat')" class="w-full text-left p-3 hover:bg-slate-700 rounded transition"><i class="fas fa-comments mr-2"></i> แชท Realtime</button>
+            <a href="https://t.me/your_bot" target="_blank" class="block w-full text-left p-3 hover:bg-slate-700 rounded transition text-blue-300"><i class="fab fa-telegram mr-2"></i> การแจ้งเตือน Telegram</a>
+            <button onclick="logout()" class="w-full text-left p-3 hover:bg-red-600 rounded mt-10 transition"><i class="fas fa-sign-out-alt mr-2"></i> ออกจากระบบ</button>
+        </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col overflow-hidden">
+        <header class="bg-white shadow p-4 flex justify-between items-center">
+            <button onclick="toggleSidebar()" class="text-2xl text-slate-800 md:hidden"><i class="fas fa-bars"></i></button>
+            <h2 id="currentTitle" class="text-xl font-bold text-gray-700">ส่งซ่อมครุภัณฑ์</h2>
+            <div id="userInfo" class="text-sm font-semibold">User: -</div>
+        </header>
+
+        <section id="contentBody" class="p-6 overflow-y-auto flex-1">
+            
+            <div id="sec-form" class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-bold mb-4 border-b pb-2">แบบฟอร์มแจ้งซ่อม</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm">ชื่อผู้แจ้ง</label>
+                        <input type="text" id="repName" class="w-full p-2 border rounded bg-gray-50">
+                    </div>
+                    <div>
+                        <label class="block text-sm">แผนก</label>
+                        <input type="text" id="repDept" class="w-full p-2 border rounded">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm">เบอร์ติดต่อ (10 หลัก ขึ้นต้นด้วย 06, 08, 09)</label>
+                        <input type="text" id="repPhone" maxlength="10" placeholder="08xxxxxxxx" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block text-sm">ประเภทครุภัณฑ์</label>
+                        <select id="repType" onchange="updateAssetCode()" class="w-full p-2 border rounded">
+                            <option value="A">คอมพิวเตอร์ (A)</option>
+                            <option value="B">เครื่องปรับอากาศ (B)</option>
+                            <option value="C">โต๊ะ (C)</option>
+                            <option value="D">โซฟา (D)</option>
+                            <option value="E">เครื่องถ่ายเอกสาร (E)</option>
+                            <option value="F">โปรเจกเตอร์ (F)</option>
+                            <option value="G">อื่นๆ (G)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm">เลขรหัสครุภัณฑ์</label>
+                        <div class="flex">
+                            <span id="prefixCode" class="bg-gray-200 p-2 rounded-l border border-r-0">A</span>
+                            <input type="text" id="assetNum" placeholder="หมายเลข" class="w-full p-2 border rounded-r focus:outline-none">
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm">สถานที่</label>
+                        <input type="text" id="repLoc" class="w-full p-2 border rounded">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm">ความเร่งด่วน</label>
+                        <select id="repUrgency" class="w-full p-2 border rounded">
+                            <option value="ปกติ" class="text-green-600">ปกติ (สีเขียว)</option>
+                            <option value="ด่วน" class="text-orange-500">ด่วน (สีส้ม)</option>
+                            <option value="ด่วนที่สุด" class="text-red-600">ด่วนที่สุด (สีแดง)</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm">รายละเอียดปัญหา</label>
+                        <textarea id="repDetail" class="w-full p-2 border rounded h-24"></textarea>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm">แนบรูปภาพ (JPG/PNG)</label>
+                        <input type="file" id="repImg" accept="image/png, image/jpeg" class="w-full p-2 border rounded">
+                    </div>
+                </div>
+                <button onclick="submitRepair()" class="w-full mt-6 bg-green-600 text-white p-3 rounded-lg font-bold hover:bg-green-700">ส่งข้อมูลแจ้งซ่อม</button>
+            </div>
+
+            <div id="sec-tracking" class="hidden space-y-4">
+                <div id="trackingList"></div>
+            </div>
+
+            <div id="sec-history" class="hidden">
+                <div class="mb-4 flex gap-2">
+                    <input type="text" id="searchHistory" placeholder="ค้นหาประวัติ..." class="p-2 border rounded flex-1">
+                    <button class="bg-slate-700 text-white px-4 rounded"><i class="fas fa-search"></i></button>
+                </div>
+                <div id="historyList" class="space-y-3"></div>
+            </div>
+
+            <div id="sec-members" class="hidden">
+                <div class="bg-white p-6 rounded-lg shadow mb-6">
+                    <h3 class="font-bold mb-4">ลงทะเบียนสมาชิกใหม่</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <select id="regTitle" class="p-2 border rounded"><option>นาย</option><option>นาง</option><option>นางสาว</option></select>
+                        <input type="text" id="regName" placeholder="ชื่อ-นามสกุล" class="p-2 border rounded">
+                        <input type="text" id="regPos" placeholder="ตำแหน่ง" class="p-2 border rounded">
+                        <input type="date" id="regBirth" class="p-2 border rounded">
+                        <input type="text" id="regUser" placeholder="Username" class="p-2 border rounded">
+                        <input type="password" id="regPass" placeholder="Password" class="p-2 border rounded">
+                    </div>
+                    <button onclick="registerUser()" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded">ยืนยันการลงทะเบียน</button>
+                </div>
+                <div id="userListTable" class="bg-white rounded shadow p-4 overflow-x-auto"></div>
+            </div>
+
+            <div id="sec-stats" class="hidden">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" id="statCards"></div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="font-bold mb-4">อันดับครุภัณฑ์ที่ซ่อมบ่อยที่สุด</h3>
+                    <div id="rankingList"></div>
+                </div>
+            </div>
+
+            <div id="sec-chat" class="hidden flex flex-col h-full bg-white rounded shadow">
+                <div id="chatBox" class="flex-1 p-4 overflow-y-auto space-y-2 bg-gray-50"></div>
+                <div class="p-4 border-t flex gap-2">
+                    <input type="text" id="chatMsg" class="flex-1 p-2 border rounded" placeholder="พิมพ์ข้อความ...">
+                    <button onclick="sendChat()" class="bg-blue-600 text-white px-4 rounded"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+
+        </section>
+    </main>
+</div>
+
+<div id="imgModal" class="modal" onclick="this.style.display='none'">
+    <img class="modal-content" id="modalImg">
+</div>
+
+<script>
+    // Mock Data Store (Real-time Simulation)
+    let repairs = [];
+    let history = [];
+    let users = [
+        {user:'Admin', pass:'Admin123', role:'admin', name:'ผู้ดูแลระบบ'},
+        {user:'Staff', pass:'Staff123', role:'staff', name:'เจ้าหน้าที่ซ่อม'},
+        {user:'p1', pass:'p123', role:'employee', name:'พนักงาน 01'}
+    ];
+    let currentUser = null;
+    let selectedRole = 'staff';
+
+    // Role Selection
+    function setRole(role) {
+        selectedRole = role;
+        document.getElementById('roleStaff').className = role === 'staff' ? 'flex-1 py-2 bg-blue-600 text-white rounded-l-lg' : 'flex-1 py-2 bg-white text-blue-600 rounded-l-lg border border-blue-600';
+        document.getElementById('roleEmp').className = role === 'employee' ? 'flex-1 py-2 bg-blue-600 text-white rounded-r-lg' : 'flex-1 py-2 bg-white text-blue-600 rounded-r-lg border border-blue-600';
+    }
+
+    // Login logic
+    function handleLogin() {
+        const u = document.getElementById('username').value;
+        const p = document.getElementById('password').value;
+        const user = users.find(x => x.user === u && x.pass === p);
+
+        if(user) {
+            if(u === 'Admin') { /* Admin Access both */ }
+            else if(selectedRole === 'staff' && user.role !== 'staff') { alert('คุณไม่มีสิทธิ์เข้าถึงส่วนเจ้าหน้าที่'); return; }
+            else if(selectedRole === 'employee' && user.role !== 'employee') { alert('คุณไม่มีสิทธิ์เข้าถึงส่วนพนักงาน'); return; }
+            
+            currentUser = user;
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            document.getElementById('userInfo').innerText = `ผู้ใช้: ${user.name} (${user.role})`;
+            
+            if(user.role === 'admin' || user.role === 'staff') {
+                document.getElementById('navAdminMember').classList.toggle('hidden', user.role !== 'admin');
+                document.getElementById('navAdminStats').classList.toggle('hidden', user.role !== 'admin');
+            }
+            showSection('form');
+        } else {
+            alert('Username หรือ Password ไม่ถูกต้อง');
+        }
+    }
+
+    function logout() { location.reload(); }
+
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+
+    function showSection(id) {
+        const sections = ['form', 'tracking', 'history', 'members', 'stats', 'chat'];
+        sections.forEach(s => document.getElementById(`sec-${s}`).classList.add('hidden'));
+        document.getElementById(`sec-${id}`).classList.remove('hidden');
+        document.getElementById('currentTitle').innerText = document.querySelector(`button[onclick="showSection('${id}')"]`).innerText;
+        if(window.innerWidth < 768) toggleSidebar();
+        
+        if(id === 'tracking') renderTracking();
+        if(id === 'history') renderHistory();
+        if(id === 'stats') renderStats();
+    }
+
+    // Form logic
+    function updateAssetCode() {
+        const val = document.getElementById('repType').value;
+        document.getElementById('prefixCode').innerText = val;
+    }
+
+    function submitRepair() {
+        const phone = document.getElementById('repPhone').value;
+        const validPhone = /^(06|08|09)\d{8}$/.test(phone);
+        
+        if(!validPhone) {
+            alert('เบอร์ติดต่อไม่ถูกต้อง ต้องเป็น 10 หลักและขึ้นต้นด้วย 06, 08, 09 เท่านั้น');
+            return;
+        }
+
+        const typeMap = {A:'คอมพิวเตอร์', B:'เครื่องปรับอากาศ', C:'โต๊ะ', D:'โซฟา', E:'เครื่องถ่ายเอกสาร', F:'โปรเจกเตอร์', G:'อื่นๆ'};
+        const fileInput = document.getElementById('repImg');
+        let imgUrl = "https://via.placeholder.com/150?text=No+Image";
+        
+        const newRepair = {
+            id: Date.now(),
+            date: new Date().toLocaleDateString('th-TH'),
+            time: new Date().toLocaleTimeString('th-TH'),
+            sender: document.getElementById('repName').value,
+            dept: document.getElementById('repDept').value,
+            phone: phone,
+            type: typeMap[document.getElementById('repType').value],
+            typeCode: document.getElementById('repType').value,
+            assetId: document.getElementById('prefixCode').innerText + document.getElementById('assetNum').value,
+            location: document.getElementById('repLoc').value,
+            urgency: document.getElementById('repUrgency').value,
+            detail: document.getElementById('repDetail').value,
+            status: 'กำลังรับซ่อม',
+            img: imgUrl
+        };
+
+        repairs.push(newRepair);
+        alert('ส่งข้อมูลสำเร็จ!');
+        showSection('tracking');
+    }
+
+    // Tracking UI
+    function renderTracking() {
+        const list = document.getElementById('trackingList');
+        list.innerHTML = '';
+        repairs.forEach(item => {
+            let color = item.urgency === 'ปกติ' ? 'text-green-600' : (item.urgency === 'ด่วน' ? 'text-orange-500' : 'text-red-600');
+            let isAdmin = currentUser.role === 'admin' || currentUser.role === 'staff';
+            
+            list.innerHTML += `
+                <div class="bg-white p-4 rounded shadow border-l-4 ${item.urgency==='ปกติ'?'border-green-500':item.urgency==='ด่วน'?'border-orange-400':'border-red-600'}">
+                    <div class="flex justify-between items-start cursor-pointer" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                        <div>
+                            <span class="text-xs font-bold px-2 py-1 rounded bg-gray-100">${item.assetId}</span>
+                            <h4 class="font-bold">${item.type}</h4>
+                            <p class="text-sm text-gray-500">${item.date} ${item.time}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-sm font-bold ${color}">${item.urgency}</span>
+                            <p class="text-xs text-blue-600 font-bold">${item.status}</p>
+                        </div>
+                    </div>
+                    <div class="hidden mt-4 pt-4 border-t space-y-2 text-sm">
+                        <p><strong>ผู้แจ้ง:</strong> ${item.sender} (แผนก ${item.dept})</p>
+                        <p><strong>รายละเอียด:</strong> ${item.detail}</p>
+                        <p><strong>สถานที่:</strong> ${item.location}</p>
+                        <img src="${item.img}" class="w-32 h-32 object-cover rounded mt-2 zoomable" onclick="openZoom(this.src)">
+                        <div class="flex gap-2 mt-4">
+                            ${isAdmin ? `
+                            <select onchange="updateStatus(${item.id}, this.value)" class="p-1 border rounded text-xs">
+                                <option ${item.status==='กำลังรับซ่อม'?'selected':''}>กำลังรับซ่อม</option>
+                                <option ${item.status==='กำลังซ่อม'?'selected':''}>กำลังซ่อม</option>
+                                <option ${item.status==='ทดลองใช้งาน'?'selected':''}>ทดลองใช้งาน</option>
+                            </select>
+                            <button onclick="finishRepair(${item.id})" class="bg-green-600 text-white px-3 py-1 rounded text-xs">เสร็จสิ้น</button>
+                            ` : ''}
+                            <button onclick="cancelRepair(${item.id})" class="bg-red-500 text-white px-3 py-1 rounded text-xs">ยกเลิก</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function updateStatus(id, newStatus) {
+        let item = repairs.find(x => x.id === id);
+        if(item) item.status = newStatus;
+        renderTracking();
+    }
+
+    function finishRepair(id) {
+        let index = repairs.findIndex(x => x.id === id);
+        let item = repairs.splice(index, 1)[0];
+        item.status = 'เสร็จสิ้น';
+        history.push(item);
+        renderTracking();
+    }
+
+    function cancelRepair(id) {
+        let index = repairs.findIndex(x => x.id === id);
+        let item = repairs.splice(index, 1)[0];
+        item.status = 'ยกเลิก';
+        history.push(item);
+        renderTracking();
+    }
+
+    // History UI
+    function renderHistory() {
+        const list = document.getElementById('historyList');
+        list.innerHTML = '';
+        history.forEach(item => {
+            list.innerHTML += `
+                <div class="bg-gray-100 p-3 rounded flex justify-between items-center cursor-pointer" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                    <span>${item.assetId} - ${item.type}</span>
+                    <span class="${item.status==='เสร็จสิ้น'?'text-green-600':'text-red-600'} font-bold">${item.status}</span>
+                </div>
+                <div class="hidden bg-white p-4 border rounded shadow-inner text-sm mb-2">
+                   <div class="grid grid-cols-2 gap-2">
+                        <p><strong>ผู้แจ้ง:</strong> ${item.sender}</p>
+                        <p><strong>วันที่:</strong> ${item.date}</p>
+                        <p class="col-span-2"><strong>สาเหตุ:</strong> ${item.detail}</p>
+                   </div>
+                   <img src="${item.img}" class="w-20 h-20 object-cover mt-2 zoomable" onclick="openZoom(this.src)">
+                </div>
+            `;
+        });
+    }
+
+    // Stats Logic
+    function renderStats() {
+        const stats = document.getElementById('statCards');
+        const ranking = document.getElementById('rankingList');
+        
+        const total = repairs.length + history.length;
+        const done = history.filter(x => x.status === 'เสร็จสิ้น').length;
+
+        stats.innerHTML = `
+            <div class="bg-blue-500 text-white p-4 rounded-lg shadow">ทั้งหมด ${total} รายการ</div>
+            <div class="bg-green-500 text-white p-4 rounded-lg shadow">ซ่อมเสร็จ ${done} รายการ</div>
+            <div class="bg-orange-500 text-white p-4 rounded-lg shadow">กำลังดำเนินการ ${repairs.length}</div>
+        `;
+
+        // Sort ranking
+        let counts = {};
+        [...repairs, ...history].forEach(x => { counts[x.assetId] = (counts[x.assetId] || 0) + 1; });
+        let sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]);
+
+        ranking.innerHTML = sorted.map(([id, count], i) => `
+            <div class="flex justify-between border-b py-2">
+                <span>${i+1}. เลขครุภัณฑ์: ${id}</span>
+                <span class="font-bold">ซ่อม ${count} ครั้ง</span>
+            </div>
+        `).join('');
+    }
+
+    // Member Logic
+    function registerUser() {
+        const newUser = {
+            user: document.getElementById('regUser').value,
+            pass: document.getElementById('regPass').value,
+            name: document.getElementById('regName').value,
+            role: 'employee' // default new register to employee
+        };
+        if(!newUser.user || !newUser.pass) return alert('กรุณากรอกข้อมูลให้ครบ');
+        users.push(newUser);
+        alert('ลงทะเบียนสำเร็จ! สามารถนำไป Login ได้ทันที');
+        document.getElementById('regUser').value = '';
+        document.getElementById('regPass').value = '';
+    }
+
+    // Chat Simulation
+    function sendChat() {
+        const msg = document.getElementById('chatMsg').value;
+        if(!msg) return;
+        const box = document.getElementById('chatBox');
+        box.innerHTML += `
+            <div class="flex flex-col items-end">
+                <span class="text-xs text-gray-400">${currentUser.name}</span>
+                <div class="bg-blue-600 text-white p-2 rounded-lg rounded-tr-none max-w-xs">${msg}</div>
+            </div>
+        `;
+        document.getElementById('chatMsg').value = '';
+        box.scrollTop = box.scrollHeight;
+    }
+
+    // Image Zoom
+    function openZoom(src) {
+        document.getElementById('modalImg').src = src;
+        document.getElementById('imgModal').style.display = 'block';
+    }
+
+    // Initialize
+    updateAssetCode();
+</script>
+
+</body>
+</html>
